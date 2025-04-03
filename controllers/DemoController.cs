@@ -13,6 +13,7 @@ namespace web_api_base.Controllers
     {
         public DemoController()
         {
+            
         }
 
         [HttpGet("getall")]

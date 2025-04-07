@@ -55,6 +55,8 @@ public partial class EbayContext : DbContext
 
     public virtual DbSet<UserGroup> UserGroups { get; set; }
 
+    public virtual DbSet<UserRole> UserRoles { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=ConnectionString");
 
@@ -361,7 +363,7 @@ public partial class EbayContext : DbContext
 
             entity.ToTable("Refresh_tokens");
 
-            entity.HasIndex(e => e.Token, "UQ__Refresh___CA90DA7AADA82DC0").IsUnique();
+            entity.HasIndex(e => e.Token, "UQ__Refresh___CA90DA7A4B1BDF21").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ClientId)
@@ -399,8 +401,7 @@ public partial class EbayContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("ip_address");
             entity.Property(e => e.Token)
-                .HasMaxLength(255)
-                .IsUnicode(false)
+                .HasMaxLength(500)
                 .HasColumnName("token");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
@@ -440,21 +441,13 @@ public partial class EbayContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.Deleted).HasDefaultValue(false);
-
-            entity.HasOne(d => d.Group).WithMany(p => p.RoleGroups)
-                .HasForeignKey(d => d.GroupId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__RoleGroup__Group__02084FDA");
-
-            entity.HasOne(d => d.Role).WithMany(p => p.RoleGroups)
-                .HasForeignKey(d => d.RoleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__RoleGroup__RoleI__01142BA1");
         });
 
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Users__3214EC07498664A6");
+
+            entity.HasIndex(e => e.FullName, "IX_Users_FullName");
 
             entity.HasIndex(e => e.Username, "UQ__Users__536C85E491807BE2").IsUnique();
 
@@ -482,16 +475,25 @@ public partial class EbayContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.Deleted).HasDefaultValue(false);
+        });
 
-            entity.HasOne(d => d.Group).WithMany(p => p.UserGroups)
-                .HasForeignKey(d => d.GroupId)
+        modelBuilder.Entity<UserRole>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.RoleId });
+
+            entity.ToTable("UserRole");
+
+            entity.Property(e => e.Description).HasMaxLength(255);
+
+            entity.HasOne(d => d.Role).WithMany(p => p.UserRoles)
+                .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__UserGroup__Group__7B5B524B");
+                .HasConstraintName("FK_UserRole_Roles");
 
-            entity.HasOne(d => d.User).WithMany(p => p.UserGroups)
+            entity.HasOne(d => d.User).WithMany(p => p.UserRoles)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__UserGroup__UserI__7A672E12");
+                .HasConstraintName("FK_UserRole_Users");
         });
 
         OnModelCreatingPartial(modelBuilder);

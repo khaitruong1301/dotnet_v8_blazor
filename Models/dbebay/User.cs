@@ -35,5 +35,5 @@ public partial class User
 
     public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
-    public virtual ICollection<UserGroup> UserGroups { get; set; } = new List<UserGroup>();
+    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }

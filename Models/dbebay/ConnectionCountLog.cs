@@ -14,4 +14,6 @@ public partial class ConnectionCountLog
     public DateTime? CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
+
+    public int? ConnectionCount { get; set; }
 }

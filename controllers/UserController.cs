@@ -17,49 +17,37 @@ namespace web_api_base.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly EbayContext _context ;
-        private readonly JwtAuthService _jwtService ;
-        public UserController(EbayContext db, JwtAuthService jwt)
+        public IUserService _userService;
+        public UserController(IUserService userService)
         {
-            _context = db;
-            _jwtService = jwt;
+            _userService = userService;
         }
 
         [HttpPost("/user/login")]
         public async Task<ActionResult> Login(UserLoginVM userLogin)
         {
-            //Tìm user trong db có username hoặc email 
-            var userCheckLogin = await  _context.Users.SingleOrDefaultAsync(us => us.Username == userLogin.Account || us.Email == userLogin.Account);
-            if(userCheckLogin != null && PasswordHelper.VerifyPassword(userLogin.Password, userCheckLogin.PasswordHash)) //Nếu account có trong db (account có thể username hoặc email)    
-            {
-                
-                //Tạo token
-                string token = _jwtService.GenerateToken(userCheckLogin);
-                UserLoginResultVM usLoginResult = new UserLoginResultVM();
-                usLoginResult.AccessToken = token;
-                usLoginResult.Account = userLogin.Account;
-                return Ok(usLoginResult);
-                //Trả về kết quả là user name và token
-            }
-            return BadRequest("Tài khoản mật khẩu không đúng!");
+            return await _userService.Login(userLogin);
         }
         [Authorize]
         [HttpGet("/user/GetProfile")]
-        public async Task<ActionResult> GetProfile([FromHeader]string authorization) {
-            string token = authorization.Replace("Bearer ",""); 
-            // string token  = HttpContext.Request.Headers["Authorization"];
-            string account = _jwtService.DecodePayloadToken(token);
-            var user = _context.Users.SingleOrDefault(us => us.Username == account || us.Email == account);
-            return Ok(user);
+        public async Task<ActionResult> GetProfile([FromHeader] string authorization)
+        {
+            // string token = authorization.Replace("Bearer ", "");
+            // // string token  = HttpContext.Request.Headers["Authorization"];
+            // string account = _jwtService.DecodePayloadToken(token);
+            // var user = _context.Users.SingleOrDefault(us => us.Username == account || us.Email == account);
+            // return Ok(user);
+            return Ok("");
         }
-        
-        [Authorize(Roles ="Buyer,Seller")]
+
+        [Authorize(Roles = "Buyer,Seller")]
         [HttpGet("/user/PostNew")]
-        public async Task<ActionResult> PostNew() {
+        public async Task<ActionResult> PostNew()
+        {
 
             return Ok("");
         }
-       
+
     }
 }
 

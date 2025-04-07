@@ -26,9 +26,9 @@ builder.Services.AddEndpointsApiExplorer();
 
 
 // Đọc connection string từ appsettings.json
-var connectionString = builder.Configuration.GetConnectionString("EbayConnection");
+var connectionString = builder.Configuration.GetConnectionString("ConnectionString");
 //Kết nối db
-builder.Services.AddDbContext<EbayContext>(options => options.UseLazyLoadingProxies(false).UseSqlServer(connectionString));
+builder.Services.AddDbContext<EbayContext>(options => options.UseLazyLoadingProxies(false).UseSqlServer("Server=103.97.125.207,1433;Database=eBayDB;User Id=sa;Password=khaicybersoft123@;TrustServerCertificate=True;"));
 //Bật giao diện authentication 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -96,6 +96,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 builder.Services.AddScoped<JwtAuthService>();
 // Thêm dịch vụ Authorization để hỗ trợ phân quyền người dùng
 builder.Services.AddAuthorization();
+
+//DI Repository,Service
+//repo
+builder.Services.AddScoped<IUserRepository,UserRepository>();
+// builder.Services.AddScoped<IUserRoleRepository,UserRoleRepository>();
+builder.Services.AddScoped<IRoleRepository,RoleRepository>();
+//unitofwork
+builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+//service
+builder.Services.AddScoped<IUserService,UserService>();
 
 
 

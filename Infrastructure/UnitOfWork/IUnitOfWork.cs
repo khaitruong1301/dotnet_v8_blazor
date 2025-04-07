@@ -1,20 +1,27 @@
 using web_api_base.Models.dbebay;
 public interface IUnitOfWork : IAsyncDisposable
 {
-    public IProductRepository _productRepository{get;}
+    public IUserRepository _userRepository{get;}
+    // public IUserRoleRepository _userRoleRepository{get;}
+    public IRoleRepository _roleRepository{get;}
     Task<int> SaveChangesAsync();
 }
 
 public class UnitOfWork: IUnitOfWork
 {
-    public IProductRepository _productRepository{get;}
+     public IUserRepository _userRepository{get;}
+    // public IUserRoleRepository _userRoleRepository{get;}
+    public IRoleRepository _roleRepository{get;}
 
     private readonly EbayContext _context;
     
-    public UnitOfWork(EbayContext context, IProductRepository productRepository)
+    public UnitOfWork(EbayContext context, IUserRepository userRepository, IRoleRepository roleRepository)
     {
         _context = context;
-        _productRepository = productRepository;
+        _userRepository = userRepository;
+        // _userRoleRepository = userRoleRepository;
+        _roleRepository = roleRepository;
+
     }
     public Task<int> SaveChangesAsync()
     {

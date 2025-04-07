@@ -15,5 +15,5 @@ public partial class Role
 
     public bool? Deleted { get; set; }
 
-    public virtual ICollection<RoleGroup> RoleGroups { get; set; } = new List<RoleGroup>();
+    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }

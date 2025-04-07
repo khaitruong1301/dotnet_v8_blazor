@@ -14,8 +14,4 @@ public partial class UserGroup
     public DateTime? CreatedAt { get; set; }
 
     public bool? Deleted { get; set; }
-
-    public virtual Group Group { get; set; } = null!;
-
-    public virtual User User { get; set; } = null!;
 }

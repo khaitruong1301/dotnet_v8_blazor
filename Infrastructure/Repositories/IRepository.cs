@@ -57,3 +57,6 @@ public class Repository<T> : IRepository<T> where T : class
     public async Task<IEnumerable<T>> WhereAsync(Expression<Func<T, bool>> predicate)  => await _dbSet.AsNoTracking().Where(predicate).ToListAsync();
 
 }
+
+
+

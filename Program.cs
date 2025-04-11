@@ -1,6 +1,7 @@
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
@@ -62,6 +63,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 
+
 //Thêm middleware authentication
 var privateKey = builder.Configuration["jwt:Secret-Key"];
 var Issuer = builder.Configuration["jwt:Issuer"];
@@ -102,12 +104,25 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IUserRepository,UserRepository>();
 // builder.Services.AddScoped<IUserRoleRepository,UserRoleRepository>();
 builder.Services.AddScoped<IRoleRepository,RoleRepository>();
+builder.Services.AddScoped<IProductRepository,ProductRepository>();
+builder.Services.AddScoped<IProductImageRepository,ProductImageRepository>();
+builder.Services.AddScoped<IOrderRepository,OrderRepository>();
+builder.Services.AddScoped<IOrderDetailRepository,OrderDetailRepository>();
+builder.Services.AddScoped<IListingRepository,ListingRepository>();
 //unitofwork
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 //service
 builder.Services.AddScoped<IUserService,UserService>();
+builder.Services.AddScoped<IProductService,ProductService>();
 
+//service http client
+builder.Services.AddHttpClient();
+//Add blazor storage
+// builder.Services.AddServerSideBlazor();
+builder.Services.AddBlazoredLocalStorage();
 
+//Sử dụng httpcontext từ blazor server
+builder.Services.AddHttpContextAccessor();
 
 
 var app = builder.Build();

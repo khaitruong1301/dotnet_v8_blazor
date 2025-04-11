@@ -1,7 +1,9 @@
+using Azure;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using web_api_base.Helper;
 using web_api_base.Models.dbebay;
+using web_api_base.Models.ViewModel;
 
 public interface IUserService
 {
@@ -21,6 +23,7 @@ public class UserService : IUserService
     }
     public async Task<ActionResult> Login(UserLoginVM userLogin)
     {
+        
         //Kiểm tra user trong database
         User? userDB = await _unitOfWork._userRepository.SingleOrDefaultAsync(n => n.Username == userLogin.Account || n.Email == userLogin.Account);
         if (userDB != null && PasswordHelper.VerifyPassword(userLogin.Password, userDB.PasswordHash))
@@ -35,9 +38,11 @@ public class UserService : IUserService
                 StatusCode = 200,
                 Message = "Successfully",
                 DateTime = DateTime.Now,
-            Data = usResult
+                Data = usResult
 
             };
+         
+       
             return new OkObjectResult(resOb);
         }
         var failOb = new HTTPResponseClient<UserLoginResultVM>()
